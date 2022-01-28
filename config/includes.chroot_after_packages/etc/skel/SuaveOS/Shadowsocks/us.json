@@ -1,0 +1,9 @@
+{
+	"server":"us5.bksy1105.com",
+	"server_port":"13695",
+	"local_address":"127.0.0.1",
+	"local_port":"1080",
+	"password":"311eae",
+	"method":"aes-256-cfb",
+	"timeout":20
+}

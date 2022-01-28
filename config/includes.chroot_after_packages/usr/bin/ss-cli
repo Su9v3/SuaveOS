@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if ! [ $(id -u) = 0 ]; then
+   echo "Root priviliges needed!"
+   exit 1
+fi
+
+clear
+
+read -p "Input path to Shadowsocks server config file (usually a .json file): " path
+
+echo
+
+if [ -f "$path" ]; then
+    echo "Config file '$path' exists."
+    echo "Continuing script."
+else
+    echo "Config file '$path' does not exist."
+    echo "Ensure that the file '$path' exists."
+    echo
+    echo "Exiting script."
+    exit 1
+fi
+
+echo
+
+echo "This script executes the command 'ss-local -c <path-to-config-file> &'."
+echo "The <path-to-config-file> is the path to the .json file entered earlier."
+echo
+echo "Thus, the command 'ss-local -c $path &' will be executed."
+echo
+
+read -p "Execute? [Y/N]: " choice
+
+if [ "$choice" == "y" ]; then
+	echo "Executing command."
+	ss-local -c "$path" &
+
+elif [ "$choice" == "yes" ]; then
+	echo "Executing command."
+	ss-local -c "$path" &
+
+elif [ "$choice" == "Y" ]; then
+	echo "Executing command."
+	ss-local -c "$path" &
+
+else
+    echo "Exiting script."
+    exit 0
+fi

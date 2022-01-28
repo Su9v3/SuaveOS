@@ -1,0 +1,98 @@
+#!/bin/bash
+
+if ! [ $(id -u) = 0 ]; then
+   echo "Root privileges required!"
+   exit 1
+fi
+
+fdisk -l
+
+echo
+
+echo "Enter Your Disk (e.g. /dev/sda): "
+read disk
+
+fdisk -l $disk > BeforeCreatingPartition.txt
+
+echo "Creating persistence partition."
+(
+echo n
+echo p
+echo
+echo
+echo
+echo write
+) | fdisk $disk
+
+if [ $? -eq 0 ]; then
+    echo "Successfully created persistence partition."
+else
+    echo "Failed to create persistence partition."
+    exit 1
+fi
+
+echo
+diff BeforeCreatingPartition.txt <(fdisk -l $disk) | grep $disk
+echo
+
+echo "The above is the comparison between the partition table of $disk before and after creating the new persistence partition."
+echo "Use the above comparison to figure out which is the new partition created on $disk by this program (should be something like $disk{3})."
+echo "Input the new persistence partition (should be after the '>' symbol, e.g. $disk{3}): "
+read npp
+
+echo
+
+echo "This program will create USB persistence on the partition $npp."
+read -p "Confirm [Y/N]?: " choice
+
+if [ "$choice" == "y" ]; then
+    echo "Continuing script, creating persistence filesystem on $npp{.}"
+
+elif [ "$choice" == "yes" ]; then
+    echo "Continuing script, creating persistence filesystem on $npp{.}"
+
+elif [ "$choice" == "Y" ]; then
+    echo "Continuing script, creating persistence filesystem on $npp{.}"
+
+else
+    echo "Exiting script."
+    exit 0
+fi
+
+echo "Formatting $npp for persistence."
+mkfs.ext4 -L persistence $npp
+e2label $npp persistence
+
+echo "Creating mount point and mounting persistence partition."
+mkdir mount
+mount $npp mount
+
+echo "Configuring persistence (this script will edit the persistence.conf so it contains the lines '/ union', which makes the entire OS persistent.)."
+echo "/ union" > mount/persistence.conf
+
+echo
+
+echo "Unmounting persistence partition."
+umount $npp
+
+echo
+
+echo "Cleaning up..."
+rm -d -r mount
+rm BeforeCreatingPartition.txt
+
+echo "Done. Successfully created persistence partition."
+echo "This entire Welds instance is fully configured with persistence storage now."
+echo "All information will be saved across reboots."
+
+echo
+
+echo "IMPORTANT!: Persistence will only start working on the next boot of Welds."
+echo
+echo "This means any work done on this current Welds system won't be saved by persistence and thus will be gone on next boot."
+echo
+echo "Only on the next boot of Welds will persistence begin to work, and thus any work will be then saved across reboots."
+echo
+echo "To begin using Welds with persistence, reboot."
+
+exit 0
