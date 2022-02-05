@@ -10,12 +10,13 @@ firefox-esr
 p7zip-full
 python3
 snapd
-lxappearance
 picom
 thunar
 nitrogen
 gtk+3.0
 arc-theme
 neofetch
-moc
 conky
+alsa-utils
+pasystray
+trayer
