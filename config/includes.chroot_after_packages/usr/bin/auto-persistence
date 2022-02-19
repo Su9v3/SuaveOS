@@ -82,17 +82,6 @@ rm -d -r mount
 rm BeforeCreatingPartition.txt
 
 echo "Done. Successfully created persistence partition."
-echo "This entire Welds instance is fully configured with persistence storage now."
-echo "All information will be saved across reboots."
-
-echo
-
-echo "IMPORTANT!: Persistence will only start working on the next boot of Welds."
-echo
-echo "This means any work done on this current Welds system won't be saved by persistence and thus will be gone on next boot."
-echo
-echo "Only on the next boot of Welds will persistence begin to work, and thus any work will be then saved across reboots."
-echo
-echo "To begin using Welds with persistence, reboot."
+echo "IMPORTANT!: Persistence will only start working on the next system boot."
 
 exit 0

@@ -1,9 +1,0 @@
-{
-	"server":"jp4.bksy1105.com",
-	"server_port":"39441",
-	"local_address":"127.0.0.1",
-	"local_port":"1080",
-	"password":"4d54af",
-	"method":"rc4-md5",
-	"timeout":20
-}
