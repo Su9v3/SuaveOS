@@ -1,0 +1,69 @@
+#!/usr/bin/python3
+
+import subprocess
+import pathlib
+
+sspid = subprocess.getoutput('sudo pidof ss-local')
+pids = list(sspid.split())
+
+def ssActivate():
+
+    rsChoice = input("Start ss-local proxy? [Y/N]: ")
+
+    if(rsChoice == "y" or rsChoice == "Y" or rsChoice == "yes" or rsChoice == "Yes"):
+
+        serverFile = input("\nInput path to server JSON file: ")
+
+        if(serverFile == ""):
+            print("\nNo input detected.\n")
+            exit()
+
+        file = pathlib.Path(serverFile)
+        file = file.resolve()
+
+        if(file.exists() != True):
+            print("Given server configuration file does not exist.")
+            exit()
+
+        ret = subprocess.Popen(["ss-local", "-c", file], close_fds = True)
+        if(ret.returncode != None):
+            print("Failed to start ss-local proxy.")
+
+        else:
+            print("Successfully launched proxy.")
+
+    elif(rsChoice != "y" or rsChoice != "Y" or rsChoice != "yes" or rsChoice != "Yes"):
+        print("\nExiting script.\n")
+        exit()
+
+if(sspid != ""):
+    print("Detected PID(s) of ss-local: {pids}".format(pids = pids))
+    choice = input("Kill ss-local at PID(s): {pids}? [Y/N]: ".format(pids = pids))
+
+    if(choice == "y" or choice == "Y" or choice == "yes" or choice == "Yes"):
+
+        print("\nKilling ss-local at PID(s) {pids}".format(pids = pids))
+
+        i = 0
+
+        while i != len(pids):
+
+            ret = subprocess.run(["sudo", "kill", pids[i]])
+            if(ret.returncode != 0):
+                print("Failed to kill process at PID: {pid}".format(pid = pids[i]))
+
+            else:
+                print("Successfully killed process at PID: {pid}\n".format(pid = pids[i]))
+
+            i += 1
+
+        ssActivate()
+
+    elif(choice != "y" or choice != "Y" or choice != "yes" or choice != "Yes"):
+        print("Exiting script.")
+        exit()
+
+else:
+    print("PID(s) of ss-local undetected. Proxy hasn't been started.")
+    ssActivate()
+
